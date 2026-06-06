@@ -1,30 +1,28 @@
-// USE THIS FILE in Server Components and Server Actions only.
-import { createServerClient, type CookieOptions } from '@supabase/ssr'
-import { cookies } from 'next/headers'
+import { createServerClient } from "@supabase/ssr";
+import { cookies } from "next/headers";
+import type { Database } from "@/types/database.types";
 
 export async function createClient() {
-  const cookieStore = await cookies()
+  const cookieStore = await cookies();
 
-  return createServerClient(
+  return createServerClient<Database>(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
       cookies: {
         getAll() {
-          return cookieStore.getAll()
+          return cookieStore.getAll();
         },
         setAll(
-          cookiesToSet: { name: string; value: string; options: CookieOptions }[],
+          cookiesToSet: { name: string; value: string; options?: object }[],
         ) {
           try {
             cookiesToSet.forEach(({ name, value, options }) =>
               cookieStore.set(name, value, options),
-            )
-          } catch {
-            // TODO: Handle read-only cookie contexts.
-          }
+            );
+          } catch {}
         },
       },
     },
-  )
+  );
 }
