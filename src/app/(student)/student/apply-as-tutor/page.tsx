@@ -3,5 +3,5 @@ export default function ApplyAsTutorPage() {
     <main>
       <p>Apply as tutor page - placeholder</p>
     </main>
-  )
+  );
 }
