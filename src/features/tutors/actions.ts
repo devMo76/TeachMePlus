@@ -99,6 +99,7 @@ export async function submitTutorApplication(
       teaching_mode: result.data.teaching_mode,
       consent_given: true,
       status: "pending",
+      current_state: "student",
     })
     .select("id")
     .single();

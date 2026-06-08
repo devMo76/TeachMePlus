@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const TEACHING_MODES = ["online", "in_person", "both"] as const;
+export const TEACHING_MODES = ["online", "face_to_face", "both"] as const;
 export const GRADES = ["A+", "A", "A-", "B+", "B", "B-", "C+", "C"] as const;
 
 export const SubjectSelectionSchema = z.object({

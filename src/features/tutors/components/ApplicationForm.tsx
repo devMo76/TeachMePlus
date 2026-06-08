@@ -225,8 +225,8 @@ export default function ApplicationForm({ subjects }: Props) {
             <option key={mode} value={mode}>
               {mode === "online"
                 ? "Online"
-                : mode === "in_person"
-                  ? "In Person"
+                : mode === "face_to_face"
+                  ? "Face to Face"
                   : "Both"}
             </option>
           ))}
