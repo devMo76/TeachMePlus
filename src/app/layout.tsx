@@ -1,10 +1,19 @@
-import type { ReactNode } from 'react'
-import './globals.css'
+import type { Metadata } from "next";
+import "./globals.css";
 
-export default function RootLayout({ children }: { children: ReactNode }) {
+export const metadata: Metadata = {
+  title: "AcadMate",
+  description: "Student tutoring marketplace",
+};
+
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <html lang="en">
       <body>{children}</body>
     </html>
-  )
+  );
 }

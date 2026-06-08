@@ -1,13 +1,68 @@
-'use server'
+"use server";
 
-export async function approveApplication() {
-  // TODO: Implement application approval.
+import { revalidatePath } from "next/cache";
+import { createClient } from "@/lib/supabase/server";
+
+async function assertAdmin() {
+  const supabase = await createClient();
+  const { data: isAdmin } = await (supabase as any).rpc("is_admin");
+  if (!isAdmin) throw new Error("Unauthorized");
+  return supabase;
 }
 
-export async function rejectApplication() {
-  // TODO: Implement application rejection.
+export async function approveApplication(id: string): Promise<void> {
+  const supabase = await assertAdmin();
+
+  await (supabase as any)
+    .from("tutor_applications")
+    .update({ status: "approved" })
+    .eq("id", id);
+
+  revalidatePath("/admin/applications");
+  revalidatePath(`/admin/applications/${id}`);
 }
 
-export async function deactivateUser() {
-  // TODO: Implement user deactivation.
+export async function rejectApplication(id: string): Promise<void> {
+  const supabase = await assertAdmin();
+
+  await (supabase as any)
+    .from("tutor_applications")
+    .update({ status: "rejected" })
+    .eq("id", id);
+
+  revalidatePath("/admin/applications");
+  revalidatePath(`/admin/applications/${id}`);
+}
+
+export async function resolveReport(id: string): Promise<void> {
+  const supabase = await assertAdmin();
+
+  await (supabase as any)
+    .from("reports")
+    .update({ status: "resolved" })
+    .eq("id", id);
+
+  revalidatePath("/admin/reports");
+}
+
+export async function approvePackage(id: string): Promise<void> {
+  const supabase = await assertAdmin();
+
+  await (supabase as any)
+    .from("packages")
+    .update({ status: "approved" })
+    .eq("id", id);
+
+  revalidatePath("/admin/packages");
+}
+
+export async function rejectPackage(id: string): Promise<void> {
+  const supabase = await assertAdmin();
+
+  await (supabase as any)
+    .from("packages")
+    .update({ status: "rejected" })
+    .eq("id", id);
+
+  revalidatePath("/admin/packages");
 }
