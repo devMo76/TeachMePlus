@@ -181,3 +181,46 @@ export async function getTutorSubjects(tutorId: string) {
       price_per_hour: ts.price_per_hour,
     }));
 }
+
+export type SubjectOption = {
+  id: string;
+  code: string;
+  name: string;
+};
+
+export type SubjectsForApplicationResult =
+  | { missingProfile: true }
+  | { missingProfile: false; subjects: SubjectOption[] };
+
+export async function getSubjectsForApplication(): Promise<SubjectsForApplicationResult> {
+  const supabase = await createClient();
+
+  // Step 1 — get the logged-in user
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { missingProfile: true };
+
+  // Step 2 — get their programme_id from profiles
+  const { data: profile, error: profileError } = await (supabase as any)
+    .from("profiles")
+    .select("programme_id")
+    .eq("id", user.id)
+    .single();
+
+  if (profileError || !profile?.programme_id) {
+    return { missingProfile: true };
+  }
+
+  // Step 3 — fetch subjects scoped to their programme
+  const { data: subjects, error: subjectsError } = await supabase
+    .from("subjects")
+    .select("id, code, name")
+    .eq("programme_id", profile.programme_id)
+    .eq("is_active", true)
+    .order("code", { ascending: true });
+
+  if (subjectsError) throw new Error(subjectsError.message);
+
+  return { missingProfile: false, subjects: subjects ?? [] };
+}
