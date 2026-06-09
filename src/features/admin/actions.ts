@@ -66,3 +66,20 @@ export async function rejectPackage(id: string): Promise<void> {
 
   revalidatePath("/admin/packages");
 }
+
+export async function addSubject(formData: FormData): Promise<void> {
+  const supabase = await assertAdmin();
+
+  const name = formData.get("name") as string;
+  const code = formData.get("code") as string;
+  const university_id = formData.get("university_id") as string;
+  const programme_id = formData.get("programme_id") as string;
+
+  if (!name || !code || !university_id || !programme_id) return;
+
+  await (supabase as any)
+    .from("subjects")
+    .insert({ name, code, university_id, programme_id });
+
+  revalidatePath("/admin/subjects");
+}
